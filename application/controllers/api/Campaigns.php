@@ -24,6 +24,8 @@ class Campaigns extends REST_Controller {
         // Construct the parent class
         parent::__construct();
 
+        header('Access-Control-Allow-Origin: *'); // find why it doesn't work from the main config
+
         // Configure limits on our controller methods
         // Ensure you have created the 'limits' table and enabled 'limits' within application/config/rest.php
         $this->methods['get_campaigns_get']['limit'] = 500; // 500 requests per hour per user/key

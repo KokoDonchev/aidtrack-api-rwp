@@ -252,7 +252,7 @@ $config['rest_handle_exceptions'] = TRUE;
 | 127.0.0.1 and 0.0.0.0 are allowed by default
 |
 */
-$config['rest_ip_whitelist'] = '';
+$config['rest_ip_whitelist'] = '127.0.0.1:8886, aidtrackapi:8886';
 
 /*
 |--------------------------------------------------------------------------
@@ -556,6 +556,7 @@ $config['check_cors'] = FALSE;
 |
 */
 $config['allowed_cors_headers'] = [
+  '*',
   'Origin',
   'X-Requested-With',
   'Content-Type',
