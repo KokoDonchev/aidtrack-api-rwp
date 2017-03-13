@@ -6,21 +6,48 @@ AidTrack is RWP from Coventry University
 
 Information about the project
 
-## Structure
+## API Endpoints
 
 ```php
 use Restserver\Libraries\REST_Controller;
 
-class Campaigns extends REST_Controller
+class V1 extends REST_Controller
 {
   public function campaigns_get()
   {
-    // Display all campaigns
+    // Option ID to get one entry
+    // Without ID all campaigns are given as response
+    // Response structure will come here
   }
 
   public function campaigns_post()
   {
-    // Create a new campaign
+    // Required fields
+    // ....
+  }
+
+  public function shipments_get()
+  {
+    // Option ID to get one entry
+    // Without ID all campaigns are given as response
+    // Response structure will come here
+  }
+  public function shipments_post()
+  {
+    // Required fields
+    // ....
+  }
+
+  public function products_get()
+  {
+    // Option ID to get one entry
+    // Without ID all campaigns are given as response
+    // Response structure will come here
+  }
+  public function products_post()
+  {
+    // Required fields
+    // ....
   }
 }
 ```

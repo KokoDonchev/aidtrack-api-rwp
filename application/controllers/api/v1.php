@@ -17,10 +17,9 @@ use Restserver\Libraries\REST_Controller;
  * @license         MIT
  * @link            https://github.com/chriskacerguis/codeigniter-restserver
  */
-class Campaigns extends REST_Controller {
+class V1 extends REST_Controller {
 
-    function __construct()
-    {
+    function __construct() {
         // Construct the parent class
         parent::__construct();
 
@@ -35,7 +34,7 @@ class Campaigns extends REST_Controller {
         $this->load->database(); // loading database library
     }
 
-    public function get_campaigns_get() {
+    public function campaigns_get() {
 
         // getting campaigns from database
         $query = $this->db->query('SELECT * FROM `aidtrack_campaigns`');
