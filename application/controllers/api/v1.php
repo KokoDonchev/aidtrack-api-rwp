@@ -268,6 +268,7 @@ class V1 extends REST_Controller {
     }
 
     public function products_post() {
+        
         $message = [
             'product_name' => $this->post('product_name')
         ];
