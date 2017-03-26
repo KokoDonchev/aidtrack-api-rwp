@@ -40,14 +40,13 @@ class V1 extends REST_Controller {
 
     public function campaigns_get() {
 
-        // getting campaigns from database
-        $campaigns = $this->data->get_campaigns();
-
         $id = $this->get('id');
 
-        // If the id parameter doesn't exist return all the users
-
+        // If the id parameter doesn't exist return all the campaigns
         if ($id === NULL) {
+            // getting campaigns from database
+            $campaigns = $this->data->get_campaigns();
+
             // Check if the users data store contains users (in case the database result returns NULL)
             if ($campaigns) {
                 // Set the response and exit
@@ -66,29 +65,21 @@ class V1 extends REST_Controller {
         else {
             $id = (int) $id;
 
+            // getting campaign from database
+            $campaigns = $this->data->get_campaigns($id);
+
             // Validate the id.
             if ($id <= 0) {
                 // Invalid id, set the response and exit.
                 $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
             }
 
-            // Get the campaign from the array, using the id as key for retrieval.
-            // Usually a model is to be used for this.
-
-            $campaign = NULL;
-
             if (!empty($campaigns)) {
-                foreach ($campaigns as $key => $value) {
-                    $campaign_id = (int) $value['id']; // parsing the db campaign id to int
-                    if (isset($value['id']) && $campaign_id === $id) {
-                        $campaign = $value;
-                    } else {
-                    }
-                }
-            }
+                $jsonresponse['campaign'] = $campaigns[0];
+                $jsonresponse['campaign']['shipments'] = $this->data->get_shipments(0, $campaigns[0]['id']);
+                // $jsonresponse['campaign']['items'] = array('shipment_one' => 'hello', 'shipment_two' => 'there');
 
-            if (!empty($campaign)) {
-                $this->set_response($campaign, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+                $this->set_response($jsonresponse, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
             else {
                 $this->set_response([
@@ -135,24 +126,21 @@ class V1 extends REST_Controller {
 
     public function shipments_get() {
 
-        // getting campaigns from database
-        $campaigns = $this->data->get_shipments();
-
         $id = $this->get('id');
-
+        
         // If the id parameter doesn't exist return all the users
-
         if ($id === NULL) {
-            // Check if the users data store contains users (in case the database result returns NULL)
-            if ($campaigns) {
+             // getting campaigns from database
+            $shipments = $this->data->get_shipments();
+            if ($shipments) {
                 // Set the response and exit
-                $this->response($campaigns, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+                $this->response($shipments, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
             else {
                 // Set the response and exit
                 $this->response([
                     'status' => FALSE,
-                    'message' => 'No campaigns were found'
+                    'message' => 'No shipments were found'
                 ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
             }
         }
@@ -160,35 +148,19 @@ class V1 extends REST_Controller {
         // Find and return a single record for a particular campaign.
         else {
             $id = (int) $id;
-
+            $shipment = $this->data->get_shipments($id, 0);
             // Validate the id.
             if ($id <= 0) {
                 // Invalid id, set the response and exit.
                 $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
             }
-
-            // Get the campaign from the array, using the id as key for retrieval.
-            // Usually a model is to be used for this.
-
-            $campaign = NULL;
-
-            if (!empty($campaigns)) {
-                foreach ($campaigns as $key => $value) {
-                    $campaign_id = (int) $value['id']; // parsing the db campaign id to int
-                    if (isset($value['id']) && $campaign_id === $id) {
-                        $campaign = $value;
-                    } else {
-                    }
-                }
-            }
-
-            if (!empty($campaign)) {
-                $this->set_response($campaign, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            if (!empty($shipment)) {
+                $this->set_response($shipment, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
             else {
                 $this->set_response([
                     'status' => FALSE,
-                    'message' => 'Campaign could not be found'
+                    'message' => 'Shipment could not be found'
                 ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
             }
         }
@@ -208,24 +180,22 @@ class V1 extends REST_Controller {
 
     public function products_get() {
 
-        // getting campaigns from database
-        $campaigns = $this->data->get_products();
-
         $id = $this->get('id');
 
         // If the id parameter doesn't exist return all the users
-
         if ($id === NULL) {
+            // getting campaigns from database
+            $products = $this->data->get_products();
             // Check if the users data store contains users (in case the database result returns NULL)
-            if ($campaigns) {
+            if ($products) {
                 // Set the response and exit
-                $this->response($campaigns, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+                $this->response($products, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
             else {
                 // Set the response and exit
                 $this->response([
                     'status' => FALSE,
-                    'message' => 'No campaigns were found'
+                    'message' => 'No products were found'
                 ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
             }
         }
@@ -233,35 +203,21 @@ class V1 extends REST_Controller {
         // Find and return a single record for a particular campaign.
         else {
             $id = (int) $id;
-
+            // getting products from database
+            $products = $this->data->get_products($id);
             // Validate the id.
             if ($id <= 0) {
                 // Invalid id, set the response and exit.
                 $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
             }
 
-            // Get the campaign from the array, using the id as key for retrieval.
-            // Usually a model is to be used for this.
-
-            $campaign = NULL;
-
-            if (!empty($campaigns)) {
-                foreach ($campaigns as $key => $value) {
-                    $campaign_id = (int) $value['id']; // parsing the db campaign id to int
-                    if (isset($value['id']) && $campaign_id === $id) {
-                        $campaign = $value;
-                    } else {
-                    }
-                }
-            }
-
-            if (!empty($campaign)) {
-                $this->set_response($campaign, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            if (!empty($products)) {
+                $this->set_response($products, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
             else {
                 $this->set_response([
                     'status' => FALSE,
-                    'message' => 'Campaign could not be found'
+                    'message' => 'Product could not be found'
                 ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
             }
         }
