@@ -20,13 +20,6 @@ class Welcome extends CI_Controller {
 	 */
 	public function index()
 	{
-		// $this->load->view('welcome_message');
-
-		$this->load->database();
-
-		$query = $this->db->query('SELECT * FROM `aidtrack_campaigns`');
-
-		var_dump($query->result());
-
+		$this->load->view('welcome_message');
 	}
 }
