@@ -425,7 +425,9 @@ class V1 extends REST_Controller {
             }
 
             if (!empty($man_info)) {
-                $this->set_response($man_info, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+                $jsonresponse['manufacturer'] = $man_info[0];
+
+                $this->set_response($jsonresponse, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
             else {
                 $this->set_response([
@@ -434,6 +436,20 @@ class V1 extends REST_Controller {
                 ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
             }
         }
+    }
+
+    public function manufacturers_post() {
+        $data = [
+            'manufacturer_name' => $this->post('manufacturer_name'),
+            'status' => true
+        ];
+
+        $this->data->add_manufacturer($data['manufacturer_name']);
+
+        $jsonresponse = $data;
+        $jsonresponse['info'] = $this->data->get_last_manufacturer();
+
+        $this->set_response($jsonresponse, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
     }
 
 }

@@ -162,4 +162,9 @@ class Data extends CI_Model {
         $this->db->query($query, array($man_name));
     }
 
+    public function get_last_manufacturer() {
+        $query = $this->db->select('*')->from('aidtrack_manufacturers')->order_by('id', 'DESC')->limit(1)->get();
+        return $query->result_array();
+    }
+
 }
