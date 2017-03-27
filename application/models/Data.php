@@ -79,12 +79,12 @@ class Data extends CI_Model {
         }
     }
     
-    public function add_product($product_name) {
-        $query = "INSERT INTO `aidtrack_products` (id, product_name) VALUES ('', ?)";
-        $this->db->query($query, array($product_name));
+    public function add_product($product_name, $man_id, $product_description) {
+        $query = "INSERT INTO `aidtrack_products` (id, product_name, product_description, manufacturer_id) VALUES ('', ?, ?, ?)";
+        $this->db->query($query, array($product_name, $product_description, $man_id));
     }
 
-    public function get_last_products() {
+    public function get_last_product() {
         $query = $this->db->select('*')->from('aidtrack_products')->order_by('id', 'DESC')->limit(1)->get();
         return $query->result_array();
     }
@@ -139,6 +139,27 @@ class Data extends CI_Model {
     public function update_item_history($item_id, $status, $latitude, $longitude) {
         $query = "INSERT INTO `aidtrack_item_history` (id, item_id, status, latitude, longitude) VALUES ('', ?, ?, ?, ?)";
         $this->db->query($query, array($item_id, $status, $latitude, $longitude));
+    }
+
+    /*
+    | -------------------------------------------------------------------
+    |  Manufacturers
+    | -------------------------------------------------------------------
+    */
+
+    public function get_manufacturers($man_id = false) {
+        if ($man_id === false) {
+            $query = $this->db->query('SELECT * FROM `aidtrack_manufacturers`');
+            return $query->result_array();
+        } else {
+            $query = $this->db->get_where('aidtrack_manufacturers', array('id' => $man_id));
+            return $query->result_array();
+        }
+    }
+
+    public function add_manufacturer($man_name) {
+        $query = "INSERT INTO `aidtrack_manufacturers` (id, manufacturer_name) VALUES ('', ?)";
+        $this->db->query($query, array($man_name));
     }
 
 }

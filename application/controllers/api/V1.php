@@ -217,7 +217,10 @@ class V1 extends REST_Controller {
             }
 
             if (!empty($products)) {
-                $this->set_response($products, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+                $jsonresponse = $products[0];
+                $jsonresponse['manufacturer'] = $this->data->get_manufacturers($products[0]['manufacturer_id']);
+                
+                $this->set_response($jsonresponse, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
             else {
                 $this->set_response([
@@ -231,10 +234,12 @@ class V1 extends REST_Controller {
     public function products_post() {
         
         $data = [
-            'product_name' => $this->post('product_name')
+            'product_name' => $this->post('product_name'),
+            'product_description' => $this->post('product_description'),
+            'manufacturer_id' => $this->post('manufacturer_id')
         ];
 
-        $this->data->add_product($data['product_name']);
+        $this->data->add_product($data['product_name'], $data['manufacturer_id'], $data['product_description']);
 
         $jsonresponse = $data;
         $jsonresponse['info'] = $this->data->get_last_product();
@@ -349,7 +354,6 @@ class V1 extends REST_Controller {
     }
 
     public function item_history_get() {
-
         $item_id = $this->get('id');
 
         $item_info = $this->data->get_item_history($item_id);
@@ -386,6 +390,50 @@ class V1 extends REST_Controller {
         // $jsonresponse['info'] = $this->data->get_last_campaign();
 
         $this->set_response($data, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
+    }
+
+    public function manufacturers_get() {
+        $man_id = $this->get('id');
+        
+        // If the id parameter doesn't exist return all the users
+        if ($man_id === NULL) {
+            // getting campaigns from database
+            $man_info = $this->data->get_manufacturers();
+            // Check if the users data store contains users (in case the database result returns NULL)
+            if ($man_info) {
+                // Set the response and exit
+                $this->response($man_info, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            }
+            else {
+                // Set the response and exit
+                $this->response([
+                    'status' => FALSE,
+                    'message' => 'No manufacturers were found'
+                ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+            }
+        }
+
+        // Find and return a single record for a particular campaign.
+        else {
+            $man_id = (int) $man_id;
+            // getting products from database
+            $man_info = $this->data->get_manufacturers($man_id);
+            // Validate the id.
+            if ($man_id <= 0) {
+                // Invalid id, set the response and exit.
+                $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
+            }
+
+            if (!empty($man_info)) {
+                $this->set_response($man_info, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            }
+            else {
+                $this->set_response([
+                    'status' => FALSE,
+                    'message' => 'The manufacturer was not found'
+                ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+            }
+        }
     }
 
 }
