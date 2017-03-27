@@ -93,13 +93,17 @@ class V1 extends REST_Controller {
     public function campaigns_post() {
 
         // $this->some_model->update_campaign( ... );
-        $message = [
-            'campaign_name' => $this->post('campaign_name')
+        $data = [
+            'campaign_name' => $this->post('campaign_name'),
+            'status' => true
         ];
 
-        $this->data->add_campaign($message['campaign_name']);
+        $this->data->add_campaign($data['campaign_name']);
 
-        $this->set_response($message, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
+        $jsonresponse = $data;
+        $jsonresponse['info'] = $this->data->get_last_campaign();
+
+        $this->set_response($jsonresponse, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
     }
 
     // public function campaigns_delete() {

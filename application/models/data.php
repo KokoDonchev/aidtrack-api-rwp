@@ -9,13 +9,17 @@ class Data extends CI_Model {
 
     public function get_campaigns($camp_id = false) {
         if ($camp_id === false) {
-            $query = $this->db->query('SELECT * FROM aidtrack_campaigns');
+            $query = $this->db->query('SELECT * FROM `aidtrack_campaigns`');
             return $query->result_array();
         } else {
             $query = $this->db->get_where('aidtrack_campaigns', array('id' => $camp_id));
             return $query->result_array();
         }
-        
+    }
+
+    public function get_last_campaign() {
+        $query = $this->db->select('*')->from('aidtrack_campaigns')->order_by('id', 'DESC')->limit(1)->get();
+        return $query->result_array();
     }
 
      public function add_campaign($campaign_name) {
