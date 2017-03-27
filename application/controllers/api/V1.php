@@ -259,6 +259,7 @@ class V1 extends REST_Controller {
 
                 foreach ($items as $key => $item) {
                     $jsonresponse['items'][$key]['product'] = $this->data->get_products($item['product_id']);
+                    $jsonresponse['items'][$key]['history'] = $this->data->get_item_history($item['id']);
                 }
                 // $jsonresponse['items']['products'] = $this->data->get_products(0, $items[0]['id']);
 
@@ -309,6 +310,46 @@ class V1 extends REST_Controller {
         ];
 
         $this->data->add_item($data['item_nfc'], $data['product_id'], $data['shipment_id']);
+
+        // $jsonresponse = $data;
+        // $jsonresponse['info'] = $this->data->get_last_campaign();
+
+        $this->set_response($data, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
+    }
+
+    public function item_history_get() {
+
+        $item_id = $this->get('id');
+
+        $item_info = $this->data->get_item_history($item_id);
+
+        // Validate the id.
+        if ($item_id <= 0) {
+            // Invalid id, set the response and exit.
+            $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
+        }
+
+        if (!empty($item_info)) {
+            $this->set_response($item_info, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+        }
+        else {
+            $this->set_response([
+                'status' => FALSE,
+                'message' => 'There was no history found on this item'
+            ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+        }
+    }
+
+    public function item_history_post() {
+        $data = [
+            'item_id' => $this->post('item_id'),
+            'item_status' => $this->post('status'),
+            'latitude' => $this->post('latitude'),
+            'longitude' => $this->post('longitude'),
+            'status' => true
+        ];
+
+        $this->data->update_item_history($data['item_id'], $data['item_status'], $data['latitude'], $data['longitude']);
 
         // $jsonresponse = $data;
         // $jsonresponse['info'] = $this->data->get_last_campaign();

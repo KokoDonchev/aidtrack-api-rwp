@@ -106,4 +106,25 @@ class Data extends CI_Model {
         return $query->result_array();
     }
 
+    /*
+    | -------------------------------------------------------------------
+    |  Items
+    | -------------------------------------------------------------------
+    */
+
+    public function get_item_history($item_id = false) {
+        if ($item_id === false) {
+            $query = $this->db->query('SELECT * FROM `aidtrack_item_history`');
+            return $query->result_array();
+        } else {
+            $query = $this->db->get_where('aidtrack_item_history', array('item_id' => $item_id));
+            return $query->result_array();
+        }
+    }
+
+    public function update_item_history($item_id, $status, $latitude, $longitude) {
+        $query = "INSERT INTO `aidtrack_item_history` (id, item_id, status, latitude, longitude) VALUES ('', ?, ?, ?, ?)";
+        $this->db->query($query, array($item_id, $status, $latitude, $longitude));
+    }
+
 }
