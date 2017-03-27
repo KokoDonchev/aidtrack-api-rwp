@@ -53,6 +53,11 @@ class Data extends CI_Model {
         }
     }
 
+    public function get_last_shipment() {
+        $query = $this->db->select('*')->from('aidtrack_shipments')->order_by('id', 'DESC')->limit(1)->get();
+        return $query->result_array();
+    }
+
     public function add_shipment($shipment_title, $camp_id) {
         $query = "INSERT INTO aidtrack_shipments (id, shipment_title, campaign_id) VALUES ('', ?, ?)";
         $this->db->query($query, array($shipment_title, $camp_id));

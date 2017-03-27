@@ -170,14 +170,17 @@ class V1 extends REST_Controller {
 
     public function shipments_post() {
 
-        $message = [
+        $data = [
             'shipment_title' => $this->post('shipment_title'),
             'camp_id' => $this->post('camp_id')
         ];
 
-        $this->data->add_shipment($message['shipment_title'], $message['camp_id']);
+        $this->data->add_shipment($data['shipment_title'], $data['camp_id']);
 
-        $this->set_response($message, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
+        $jsonresponse = $data;
+        $jsonresponse['info'] = $this->data->get_last_shipment();
+
+        $this->set_response($jsonresponse, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
     }
 
     public function products_get() {
