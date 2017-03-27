@@ -230,13 +230,16 @@ class V1 extends REST_Controller {
 
     public function products_post() {
         
-        $message = [
+        $data = [
             'product_name' => $this->post('product_name')
         ];
 
-        $this->data->add_product($message['product_name']);
+        $this->data->add_product($data['product_name']);
 
-        $this->set_response($message, REST_Controller::HTTP_CREATED);
+        $jsonresponse = $data;
+        $jsonresponse['info'] = $this->data->get_last_product();
+
+        $this->set_response($jsonresponse, REST_Controller::HTTP_CREATED);
     }
 
     public function items_get() {
@@ -245,11 +248,12 @@ class V1 extends REST_Controller {
 
         $shipment_id = $this->get('shipment_id');
         $product_id = $this->get('product_id');
+        $item_id = $this->get('id');
 
         if ($shipment_id != null) {
             $shipment_id = (int) $shipment_id;
 
-            $items = $this->data->get_items(0, $shipment_id);
+            $items = $this->data->get_items_by_shipment($shipment_id);
 
             // Validate the id.
             if ($shipment_id <= 0) {
@@ -278,7 +282,7 @@ class V1 extends REST_Controller {
         elseif ($product_id != null) {
             $product_id = (int) $product_id;
 
-            $items = $this->data->get_items($product_id, 0);
+            $items = $this->data->get_items_by_product($product_id);
 
             // Validate the id.
             if ($product_id <= 0) {
@@ -293,6 +297,27 @@ class V1 extends REST_Controller {
                 $this->set_response([
                     'status' => FALSE,
                     'message' => 'No items were found'
+                ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+            }
+        }
+        elseif ($item_id != null) {
+            $item_id = (int) $item_id;
+
+            $items = $this->data->get_item($item_id);
+
+            // Validate the id.
+            if ($item_id <= 0) {
+                // Invalid id, set the response and exit.
+                $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
+            }
+
+            if (!empty($items)) {
+                $this->set_response($items, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            }
+            else {
+                $this->set_response([
+                    'status' => FALSE,
+                    'message' => 'The item was not found'
                 ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
             }
         }

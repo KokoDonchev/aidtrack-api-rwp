@@ -84,21 +84,30 @@ class Data extends CI_Model {
         $this->db->query($query, array($product_name));
     }
 
+    public function get_last_products() {
+        $query = $this->db->select('*')->from('aidtrack_products')->order_by('id', 'DESC')->limit(1)->get();
+        return $query->result_array();
+    }
+
     /*
     | -------------------------------------------------------------------
     |  Items
     | -------------------------------------------------------------------
     */
 
-    public function get_items($prod_id = 0, $shipment_id = 0) {
-        if ($prod_id == 0 && $shipment_id != 0) {
-            $query = $this->db->get_where('aidtrack_items', array('shipment_id' => $shipment_id));
-            return $query->result_array();
-        }
-        if ($shipment_id == 0 && $prod_id != 0) {
-            $query = $this->db->get_where('aidtrack_items', array('product_id' => $prod_id));
-            return $query->result_array();
-        }
+    public function get_item($item_id) {
+        $query = $this->db->get_where('aidtrack_items', array('id' => $item_id));
+        return $query->result_array();
+    }
+
+    public function get_items_by_product($prod_id) {
+        $query = $this->db->get_where('aidtrack_items', array('product_id' => $prod_id));
+        return $query->result_array();
+    }
+
+    public function get_items_by_shipment($shipment_id) {
+        $query = $this->db->get_where('aidtrack_items', array('shipment_id' => $shipment_id));
+        return $query->result_array();
     }
 
     public function add_item($item_nfc, $product_id, $shipment_id) {
