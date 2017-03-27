@@ -91,8 +91,6 @@ class V1 extends REST_Controller {
     }
 
     public function campaigns_post() {
-
-        // $this->some_model->update_campaign( ... );
         $data = [
             'campaign_name' => $this->post('campaign_name'),
             'status' => true
@@ -236,6 +234,86 @@ class V1 extends REST_Controller {
         $this->data->add_product($message['product_name']);
 
         $this->set_response($message, REST_Controller::HTTP_CREATED);
+    }
+
+    public function items_get() {
+        // by shipment id
+        // by product id
+
+        $shipment_id = $this->get('shipment_id');
+        $product_id = $this->get('product_id');
+
+        if ($shipment_id != null) {
+            $shipment_id = (int) $shipment_id;
+
+            $items = $this->data->get_items(0, $shipment_id);
+
+            // Validate the id.
+            if ($shipment_id <= 0) {
+                // Invalid id, set the response and exit.
+                $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
+            }
+
+            if (!empty($items)) {
+                $jsonresponse['items'] = $items;
+
+                foreach ($items as $key => $item) {
+                    $jsonresponse['items'][$key]['product'] = $this->data->get_products($item['product_id']);
+                }
+                // $jsonresponse['items']['products'] = $this->data->get_products(0, $items[0]['id']);
+
+                $this->set_response($jsonresponse, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            }
+            else {
+                $this->set_response([
+                    'status' => FALSE,
+                    'message' => 'No items were found'
+                ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+            }
+        }
+        elseif ($product_id != null) {
+            $product_id = (int) $product_id;
+
+            $items = $this->data->get_items($product_id, 0);
+
+            // Validate the id.
+            if ($product_id <= 0) {
+                // Invalid id, set the response and exit.
+                $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
+            }
+
+            if (!empty($items)) {
+                $this->set_response($items, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            }
+            else {
+                $this->set_response([
+                    'status' => FALSE,
+                    'message' => 'No items were found'
+                ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+            }
+        }
+        else {
+            $this->set_response([
+                'status' => FALSE,
+                'message' => 'You need to set either shipment id or product id'
+            ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+        }
+    }
+
+    public function items_post() {
+        $data = [
+            'item_nfc' => $this->post('item_nfc'),
+            'product_id' => $this->post('product_id'),
+            'shipment_id' => $this->post('shipment_id'),
+            'status' => true
+        ];
+
+        $this->data->add_item($data['item_nfc'], $data['product_id'], $data['shipment_id']);
+
+        // $jsonresponse = $data;
+        // $jsonresponse['info'] = $this->data->get_last_campaign();
+
+        $this->set_response($data, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
     }
 
 }
