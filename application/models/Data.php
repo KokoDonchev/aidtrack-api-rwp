@@ -153,7 +153,7 @@ class Data extends CI_Model {
             return $query->result_array();
         } else {
             $query = $this->db->get_where('aidtrack_manufacturers', array('id' => $man_id));
-            return $query->result_array();
+            return $query->row_array();
         }
     }
 

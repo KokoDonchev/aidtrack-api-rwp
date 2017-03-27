@@ -425,7 +425,7 @@ class V1 extends REST_Controller {
             }
 
             if (!empty($man_info)) {
-                $jsonresponse['manufacturer'] = $man_info[0];
+                $jsonresponse['manufacturer'] = $man_info;
 
                 $this->set_response($jsonresponse, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
