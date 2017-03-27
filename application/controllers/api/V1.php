@@ -312,7 +312,10 @@ class V1 extends REST_Controller {
             }
 
             if (!empty($items)) {
-                $this->set_response($items, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+                $jsonresponse['item'] = $items[0];
+                $jsonresponse['item']['history'] = $this->data->get_item_history($item_id);
+
+                $this->set_response($jsonresponse, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
             }
             else {
                 $this->set_response([
