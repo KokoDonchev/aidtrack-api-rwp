@@ -174,7 +174,7 @@ class V1 extends REST_Controller {
 
         $data = [
             'shipment_title' => $this->post('shipment_title'),
-            'camp_id' => $this->post('camp_id')
+            'camp_id' => $this->post('campaign_id')
         ];
 
         $this->data->add_shipment($data['shipment_title'], $data['camp_id']);
