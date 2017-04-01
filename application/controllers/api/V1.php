@@ -349,10 +349,10 @@ class V1 extends REST_Controller {
 
         $this->data->add_item($data['item_nfc'], $data['product_id'], $data['shipment_id']);
 
-        // $jsonresponse = $data;
-        // $jsonresponse['info'] = $this->data->get_last_campaign();
+        $jsonresponse = $data;
+        $jsonresponse['info'] = $this->data->get_last_item();
 
-        $this->set_response($data, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
+        $this->set_response($jsonresponse, REST_Controller::HTTP_CREATED); // CREATED (201) being the HTTP response code
     }
 
     public function item_history_get() {
