@@ -110,6 +110,11 @@ class Data extends CI_Model {
         return $query->result_array();
     }
 
+    public function get_all_items() {
+        $query = $this->db->select('*')->from('aidtrack_items')->get();
+        return $query->result_array();
+    }
+
     public function add_item($item_nfc, $product_id, $shipment_id) {
         $query = "INSERT INTO `aidtrack_items` (id, item_nfc, product_id, shipment_id) VALUES ('', ?, ?, ?)";
         $this->db->query($query, array($item_nfc, $product_id, $shipment_id));

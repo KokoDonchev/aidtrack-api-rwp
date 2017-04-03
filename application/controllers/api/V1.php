@@ -332,10 +332,24 @@ class V1 extends REST_Controller {
             }
         }
         else {
-            $this->set_response([
-                'status' => FALSE,
-                'message' => 'You need to set either shipment id or product id'
-            ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+            // getting campaigns from database
+            $items = $this->data->get_all_items();
+            // Check if the users data store contains users (in case the database result returns NULL)
+            if ($items) {
+                // Set the response and exit
+                $this->response($items, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
+            }
+            else {
+                // Set the response and exit
+                $this->response([
+                    'status' => FALSE,
+                    'message' => 'No items were found'
+                ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
+            }
+            // $this->set_response([
+            //     'status' => FALSE,
+            //     'message' => 'You need to set either shipment id or product id'
+            // ], REST_Controller::HTTP_NOT_FOUND); // NOT_FOUND (404) being the HTTP response code
         }
     }
 
